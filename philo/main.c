@@ -6,40 +6,14 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 16:29:49 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/17 20:48:40 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/20 01:21:28 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	arg_number_error(void)
-{
-	printf("Error: wrong number of arguments\n");
-	exit(1);
-}
-
-void	argv_validator(int argc, char **argv)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (argv[i][j] < '0' || argv[i][j] > '9')
-				printf("wrong imput format, use only numbers\n");
-			j++;
-		}
-		i++;
-	}
-}
-
 void	argv_checker(int argc, char **argv)
 {
-
 	if (argc < 5 || argc > 6)
 		arg_number_error();
 	if ((ft_atoi(argv[1]) < 1) || ft_atoi(argv[1]) > MAX_PHILOS)
@@ -63,7 +37,7 @@ int	main(int argc, char **argv)
 	argv_checker(argc, argv);
 	init_program(&program, philos, argv);
 	philos_init(philos, &program, argv);
-	// thread_init(&program, philos);
 	thread_init(&program);
+	mutex_destructor(&program);
 	return (0);
 }

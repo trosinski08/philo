@@ -6,7 +6,7 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 17:05:20 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/17 20:48:20 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/20 01:28:20 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@
 # include <sys/time.h>
 
 # define MAX_PHILOS 1000
+# define T "is thinking"
+# define S "is sleeping"
+# define E "is eating"
+# define F "has taken a fork"
+# define D "died"
 
 typedef struct s_philo
 {
@@ -36,7 +41,7 @@ typedef struct s_philo
 	size_t			start_time;
 	int				id;
 	int				eating;
-	int				meals_eaten; 
+	int				meals_eaten;
 	int				number_of_philos;
 	int				meals_number;
 	int				*dead;
@@ -56,25 +61,35 @@ typedef struct s_program
 void	init_data(char **argv, t_philo *philos);
 void	init_program(t_program *program, t_philo *philos, char **argv);
 void	philos_init(t_philo *philos, t_program *program, char **argv);
+void	thread_init(t_program *program);
 
 //utils.c
 int		ft_atoi(const char *num);
-int		current_time(void);
+size_t	current_time(void);
+size_t	ft_usleep(size_t milliseconds);
+void	mutex_destructor(t_program *program);
+void	printing_lock(t_philo *philos, char *str);
+
+//utils2.c
+void	handle_1(t_philo *philos);
+void	dead_lock(t_philo *philos, int i);
+void	argv_validator(int argc, char **argv);
+void	number_of_philos_error(void);
+void	arg_number_error(void);
 
 //philo.c
 void	*routine(void *arg);
-// void	thread_init(t_program *program, t_philo *philos);
-void	thread_init(t_program *program);
-
 
 //monitor.c
 void	*monitoring(void *arg);
+void	printing_lock(t_philo *philos, char *str);
+int		discontinue(t_philo *philos);
 
 //errors_msg.c
-void	number_of_philos_error(void);
 void	time_to_die_error(void);
 void	time_to_eat_error(void);
 void	time_to_sleep_error(void);
 void	number_of_meals_error(void);
+void	thread_creat_error(t_program *program);
 
 #endif

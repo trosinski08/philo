@@ -6,55 +6,55 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 19:22:05 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/17 20:49:11 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/20 01:30:38 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*routine(void *arg)
+void	thinking(t_philo *philos)
 {
-	(void)arg;
-
-	// eat
-	//sleep
-	//think
-
-	printf("Philosopher do routine!\n");
-	return (0);
+	printing_lock(philos, T);
 }
 
-// void	thread_init(t_program *program, t_philo *philos)
-void	thread_init(t_program *program)
-
+void	sleeping(t_philo *philos)
 {
-	pthread_t	big_brother;
-	int			i;
+	printing_lock(philos, S);
+	ft_usleep(philos->time_to_sleep);
+}
 
-	i = 1;
-	if (pthread_create(&big_brother, NULL, &monitoring, program) != 0)
+void	eating(t_philo *philos)
+{
+	pthread_mutex_lock(philos->r_fork);
+	printing_lock(philos, F);
+	if (philos->number_of_philos == 1)
+		handle_1(philos);
+	pthread_mutex_lock(philos->l_fork);
+	printing_lock(philos, F);
+	philos->eating = 1;
+	printing_lock(philos, E);
+	pthread_mutex_lock(philos->meal_lock);
+	philos->last_meal = current_time();
+	philos->meals_eaten++;
+	pthread_mutex_unlock(philos->meal_lock);
+	ft_usleep(philos->time_to_eat);
+	philos->eating = 0;
+	pthread_mutex_unlock(philos->l_fork);
+	pthread_mutex_unlock(philos->r_fork);
+}
+
+void	*routine(void *arg)
+{
+	t_philo	*philos;
+
+	philos = (t_philo *)arg;
+	if (philos->id % 2 == 0)
+		ft_usleep(philos->time_to_eat - 10);
+	while (!discontinue(philos))
 	{
-		printf("Thread creation error");
-		exit(1);
+		eating(philos);
+		sleeping(philos);
+		thinking(philos);
 	}
-	while (i <= program->philos[i].number_of_philos)
-	{
-		if (pthread_create(&program->philos[i].thread, NULL, &routine, program)
-			!= 0)
-		{
-			printf("Thread creation error");
-			exit(1);
-		}
-		i++;
-	}
-	while (i <= program->philos[i].number_of_philos)
-	{
-		if (pthread_join(program->philos[i].thread, NULL)
-			!= 0)
-		{
-			printf("Thread creation error");
-			exit(1);
-		}
-		i++;
-	}
+	return (0);
 }

@@ -6,12 +6,12 @@
 #    By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/16 16:20:34 by trosinsk          #+#    #+#              #
-#    Updated: 2024/02/17 20:29:47 by trosinsk         ###   ########.fr        #
+#    Updated: 2024/02/20 01:18:29 by trosinsk         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
-CC = cc -Wall -Wextra -Werror #-fsanitize=address -g
+CC = cc -Wall -Wextra -Werror -fsanitize=thread   #-fsanitize=address -g 
 RM = rm -f
 SRC = main.c \
 		errors_msg.c \
@@ -19,6 +19,7 @@ SRC = main.c \
 		utils.c \
 		init.c \
 		monitor.c \
+		utils2.c
 
 OBJ = $(SRC:.c=.o)
 
