@@ -6,53 +6,51 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 01:12:22 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/20 01:21:31 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/21 04:34:40 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	handle_1(t_philo *philos)
+void	printing_lock(t_philo *philos, char *str)
 {
-	ft_usleep(philos->time_to_die);
-	pthread_mutex_unlock(philos->r_fork);
+	size_t	acc_time;
+
+	pthread_mutex_lock(philos->mutex_print);
+	acc_time = current_time() - philos->start_time;
+	if (!discontinue(philos))
+		printf("%zu %d %s\n", acc_time, philos->id, str);
+	pthread_mutex_unlock(philos->mutex_print);
+}
+
+void	mutex_dead(t_program *program, int i)
+{
+	t_philo	*philos;
+
+	philos = program->philos;
+	pthread_mutex_lock(philos[i].mutex_dead);
+	*philos->dead = 0;
+	pthread_mutex_unlock(philos[i].mutex_dead);
 	return ;
 }
 
-void	dead_lock(t_philo *philos, int i)
+void	handle_1(t_philo *philos)
 {
-	pthread_mutex_lock(philos[i].dead_lock);
-	*philos->dead = 1;
-	pthread_mutex_unlock(philos[i].dead_lock);
+	ft_usleep(philos->die_time);
+	pthread_mutex_unlock(philos->right_f);
+	return ;
 }
 
-void	arg_number_error(void)
-{
-	printf("Error: wrong number of arguments\n");
-	exit(1);
-}
+// int	is_eating(t_philo *philos, int i)
+// {
+// 	int	j;
 
-void	number_of_philos_error(void)
-{
-	printf("Error: wrong number of philosophers\n");
-	exit(1);
-}
-
-void	argv_validator(int argc, char **argv)
-{
-	int	i;
-	int	j;
-
-	i = 1;
-	while (i < argc)
-	{
-		j = 0;
-		while (argv[i][j])
-		{
-			if (argv[i][j] < 48 || argv[i][j] > 57)
-				printf("wrong imput format, use only numbers\n");
-			j++;
-		}
-		i++;
-	}
-}
+// 	j = 0;
+// 	// pthread_mutex_lock(philos[i].mutex_eating);
+// 	if (philos[i].dining == 0)
+// 		j = 0;
+// 	else
+// 		j = 1;
+// 	// pthread_mutex_unlock(philos[i].mutex_eating);
+// 	return (j);
+// }

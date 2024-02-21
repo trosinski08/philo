@@ -6,7 +6,7 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 16:29:49 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/20 01:21:28 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/21 01:02:18 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 void	argv_checker(int argc, char **argv)
 {
 	if (argc < 5 || argc > 6)
-		arg_number_error();
+		number_error("arguments");
 	if ((ft_atoi(argv[1]) < 1) || ft_atoi(argv[1]) > MAX_PHILOS)
-		number_of_philos_error();
+		number_error("philosophers");
 	if (ft_atoi(argv[2]) < 1)
-		time_to_die_error();
+		time_error("die");
 	if (ft_atoi(argv[3]) < 1)
-		time_to_eat_error();
+		time_error("eat");
 	if (ft_atoi(argv[4]) < 1)
-		time_to_sleep_error();
+		time_error("sleep");
 	if (argc == 6 && ft_atoi(argv[5]) < 1)
-		number_of_meals_error();
+		number_error("meals");
 	argv_validator(argc, argv);
 }
 

@@ -6,7 +6,7 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 19:17:57 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/19 23:28:08 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/02/21 03:07:41 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,27 @@ int	ft_atoi(const char *num)
 	return (conv_value * sign);
 }
 
+void	argv_validator(int argc, char **argv)
+{
+	int	i;
+	int	j;
+
+	i = 1;
+	while (i < argc)
+	{
+		j = 0;
+		if (argv[i][0] == 48 && argv[i][1])
+			input_error();
+		while (argv[i][j])
+		{
+			if (argv[i][j] < 48 || argv[i][j] > 57)
+				input_error();
+			j++;
+		}
+		i++;
+	}
+}
+
 size_t	current_time(void)
 {
 	struct timeval	tv;
@@ -55,7 +76,7 @@ size_t	ft_usleep(size_t time)
 
 	start = current_time();
 	while ((current_time() - start) < time)
-		usleep(500);
+		usleep(400);
 	return (0);
 }
 
@@ -64,23 +85,13 @@ void	mutex_destructor(t_program *program)
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&program->write_lock);
-	pthread_mutex_destroy(&program->dead_lock);
-	pthread_mutex_destroy(&program->meal_lock);
-	while (i <= program->philos[i].number_of_philos)
+	pthread_mutex_destroy(&program->mutex_print);
+	pthread_mutex_destroy(&program->mutex_dead);
+	pthread_mutex_destroy(&program->mutex_meal);
+	pthread_mutex_destroy(&program->mutex_eating);
+	while (i <= program->philos[i].philos_amount)
 	{
 		pthread_mutex_destroy(&program->fork[i]);
 		i++;
 	}
-}
-
-void	printing_lock(t_philo *philos, char *str)
-{
-	size_t	acc_time;
-
-	pthread_mutex_lock(philos->write_lock);
-	acc_time = current_time() - philos->start_time;
-	if (!discontinue(philos))
-		printf("%zu %d %s\n", acc_time, philos->id, str);
-	pthread_mutex_unlock(philos->write_lock);
 }
