@@ -6,7 +6,7 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 20:04:21 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/21 04:33:59 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/03/17 21:30:12 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ int	discontinue(t_philo *philos)
 int	non_being(t_philo *philos, int i)
 {
 	pthread_mutex_lock(philos[i].mutex_meal);
-	if (philos[i].die_time <= current_time() - philos[i].last_meal_time)
-		// && philos[i].dining == 0)
+	if ((philos[i].die_time <= current_time() - philos[i].last_meal_time)
+		&& philos[i].dining == 0)
 	{
 		pthread_mutex_unlock(philos[i].mutex_meal);
 		return (1);
@@ -57,6 +57,8 @@ int	staying_alive(t_program *program)
 	return (0);
 }
 
+//lines to check if philo is eating
+// && !is_eating(philos, i))
 int	meal_counter(t_program *program)
 {
 	t_philo	*philos;
@@ -72,7 +74,6 @@ int	meal_counter(t_program *program)
 	{
 		pthread_mutex_lock(philos[i].mutex_meal);
 		if (philos[i].meals_eaten >= philos[i].meals_number)
-			// && !is_eating(philos, i))
 			full_philo++;
 		pthread_mutex_unlock(philos[i].mutex_meal);
 		i++;

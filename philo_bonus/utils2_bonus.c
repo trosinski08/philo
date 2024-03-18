@@ -1,43 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils2.c                                           :+:      :+:    :+:   */
+/*   utils2_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 01:12:22 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/03/16 15:10:10 by trosinsk         ###   ########.fr       */
+/*   Created: 2024/03/18 13:48:12 by trosinsk          #+#    #+#             */
+/*   Updated: 2024/03/18 14:31:07 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	printing_lock(t_philo *philos, char *str)
 {
 	size_t	acc_time;
 
-	pthread_mutex_lock(philos->mutex_print);
+	sem_wait(*philos->sem_print);
 	acc_time = current_time() - philos->start_time;
 	if (!discontinue(philos))
 		printf("%zu %d %s\n", acc_time, philos->id, str);
-	pthread_mutex_unlock(philos->mutex_print);
+	sem_post(*philos->sem_print);
 }
 
-void	mutex_dead(t_program *program, int i)
+void	sem_dead(t_program *program, int i)
 {
 	t_philo	*philos;
 
 	philos = program->philos;
-	pthread_mutex_lock(philos[i].mutex_dead);
+	sem_wait(*philos[i].sem_dead);
 	*philos->dead = 0;
-	pthread_mutex_unlock(philos[i].mutex_dead);
+	sem_post(*philos[i].sem_dead);
 	return ;
 }
 
 void	handle_1(t_philo *philos)
 {
 	ft_usleep(philos->die_time);
-	pthread_mutex_unlock(philos->right_f);
+	sem_post(*philos->fork);
 	return ;
 }
 
@@ -46,11 +46,11 @@ void	handle_1(t_philo *philos)
 // 	int	j;
 
 // 	j = 0;
-// 	pthread_mutex_lock(philos[i].mutex_eating);
+// 	sem_wait(*philos[i].sem_eating);
 // 	if (philos[i].dining == 0)
 // 		j = 0;
 // 	else
 // 		j = 1;
-// 	pthread_mutex_unlock(philos[i].mutex_eating);
+// 	sem_post(*philos[i].sem_eating);
 // 	return (j);
 // }

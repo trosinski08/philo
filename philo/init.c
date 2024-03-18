@@ -6,7 +6,7 @@
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/16 16:54:36 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/02/21 04:27:10 by trosinsk         ###   ########.fr       */
+/*   Updated: 2024/03/17 23:19:05 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ void	init_program(t_program *program, t_philo *philos, char **argv)
 		i++;
 	}
 }
+		//lines to check adresses of forks
+		// printf("philos[%d].id = right fork%p 
+		//left fork%p\n", i, philos[i].right_f, philos[i].left_f);
 
 void	philos_init(t_philo *philos, t_program *program, char **argv)
 {
@@ -91,8 +94,7 @@ void	thread_init(t_program *program)
 	i = 0;
 	while (i <= program->philos[i].philos_amount)
 	{
-		if (pthread_join(program->philos[i].thread, NULL)
-			!= 0)
+		if (pthread_join(program->philos[i].thread, NULL) != 0)
 			thread_creat_error(program);
 		i++;
 	}

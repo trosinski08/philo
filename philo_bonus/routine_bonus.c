@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   routine_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: trosinsk <trosinsk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/16 19:22:05 by trosinsk          #+#    #+#             */
-/*   Updated: 2024/03/17 21:30:32 by trosinsk         ###   ########.fr       */
+/*   Created: 2024/03/18 14:00:58 by trosinsk          #+#    #+#             */
+/*   Updated: 2024/03/18 14:30:16 by trosinsk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 void	sleeping(t_philo *philos)
 {
@@ -21,30 +21,27 @@ void	sleeping(t_philo *philos)
 
 void	dining(t_philo *philos)
 {
-	pthread_mutex_lock(philos->right_f);
+	sem_wait(*philos->fork);
 	printing_lock(philos, F);
 	if (philos->philos_amount == 1)
 		handle_1(philos);
-	pthread_mutex_lock(philos->left_f);
+	sem_wait(*philos->fork);
 	printing_lock(philos, F);
 	philos->dining = 1;
 	printing_lock(philos, E);
-	pthread_mutex_lock(philos->mutex_meal);
+	sem_wait(*philos->sem_meal);
 	philos->last_meal_time = current_time();
 	philos->meals_eaten++;
-	pthread_mutex_unlock(philos->mutex_meal);
+	sem_post(*philos->sem_meal);
 	ft_usleep(philos->eat_time);
 	philos->dining = 0;
-	pthread_mutex_unlock(philos->left_f);
+	sem_post(*philos->fork);
 	if (philos->philos_amount != 1)
-		pthread_mutex_unlock(philos->right_f);
+		sem_post(*philos->fork);
 }
 
-void	*routine(void *arg)
+void	*routine(t_philo *philos)
 {
-	t_philo	*philos;
-
-	philos = (t_philo *)arg;
 	if (philos->id % 2 == 0)
 		ft_usleep(100);
 	while (!discontinue(philos))
