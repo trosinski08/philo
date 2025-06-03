@@ -19,6 +19,9 @@
 # include <pthread.h>
 # include <semaphore.h>
 # include <sys/time.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 
 # define MAX_PHILO 600
 # define T "is thinking"
@@ -57,6 +60,8 @@ typedef struct s_program
 	sem_t	*sem_meal;
 	sem_t	*sem_print;
 	t_philo	*philos;
+	pid_t	*pids;
+	int		philos_amount;
 }					t_program;
 
 //init_bonus.c
@@ -98,5 +103,10 @@ void	time_error(char *str);
 void	input_error(void);
 void	thread_creat_error(t_program *program);
 void	sem_creat_error(char *str);
+
+void	exit_program(t_program *program);
+
+void	dining(t_philo *philos);
+void	check_death(t_philo *philos);
 
 #endif

@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = philo_bonus
-CC = cc -Wall -Wextra -Werror -fsanitize=thread -g #-fsanitize=address 
+CC = cc -Wall -Wextra -Werror -g #-fsanitize=thread -fsanitize=address 
 RM = rm -f
 SRC = main_bonus.c \
 		init_bonus.c \
@@ -20,6 +20,7 @@ SRC = main_bonus.c \
 		sem_init_bonus.c \
 		big_brother_bonus.c \
 		utils2_bonus.c \
+		exit_bonus.c \
 		routine_bonus.c \
 		# //philo.c \
 

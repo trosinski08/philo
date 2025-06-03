@@ -11,14 +11,20 @@
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+#include <signal.h>
+#include <sys/wait.h>
 
 void	init_program(t_program *program, t_philo *philos, char **argv)
 {
-	int		forks_amount;
+	int	forks_amount;
 
 	forks_amount = ft_atoi(argv[1]);
 	program->dead_flag = 1;
 	program->philos = philos;
+	program->philos_amount = forks_amount;
+	program->pids = malloc(sizeof(pid_t) * forks_amount);
+	if (!program->pids)
+		exit(1);
 	sem_dead_init(program);
 	sem_eating_init(program);
 	sem_meal_init(program);
@@ -44,6 +50,7 @@ void	philos_init(t_philo *philos, t_program *program, char **argv)
 		(&philos[i])->sem_meal = &program->sem_meal;
 		(&philos[i])->sem_eating = &program->sem_eating;
 		(&philos[i])->dead = &program->dead_flag;
+		(&philos[i])->fork = &program->fork;
 		i++;
 	}
 }
@@ -60,34 +67,44 @@ void	init_data(char **argv, t_philo *philos)
 		philos->meals_number = -1;
 }
 
-// process_creat_error(program); wszystkie procesy exit
 void	process_init(t_program *program)
 {
-	int			i;
-	pid_t		pid;
+	int		amount;
+	int		i;
+	pid_t	pid;
 
+	amount = program->philos_amount;
 	i = 0;
-	pid = fork();
-	if (pid < 0)
-		exit(1);
-	while (i <= program->philos[i].philos_amount)
+	while (i < amount)
 	{
-		if (pid == 0)
+		pid = fork();
+		if (pid < 0)
+			exit(1);
+		else if (pid == 0)
 		{
-			printf("philo no %d create\n", program->philos[i].id);
-			while (supervising(program) == 0)
-			{
-				routine(program->philos);
-			}
+			program->philos[i].start_time = current_time();
+			program->philos[i].last_meal_time = program->philos[i].start_time;
+			routine(&program->philos[i]);
+			exit(0);
 		}
 		else
-		{
-			fork();
-			big_brother_init(program);
-			waitpid(pid, NULL, 0);
-		}
+			program->pids[i] = pid;
 		i++;
 	}
+	big_brother_init(program);
+	i = 0;
+	while (i < amount)
+	{
+		kill(program->pids[i], SIGTERM);
+		i++;
+	}
+	i = 0;
+	while (i < amount)
+	{
+		waitpid(program->pids[i], NULL, 0);
+		i++;
+	}
+	exit_program(program);
 }
 
 void	big_brother_init(t_program *program)
